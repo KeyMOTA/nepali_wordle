@@ -1,4 +1,4 @@
-.PHONY: help setup up down restart logs logs-backend logs-db logs-nginx ps status test dev-backend clean
+.PHONY: help setup up down restart logs logs-backend logs-db logs-nginx ps status test dev-backend clean check-docker
 
 # Detect OS
 ifeq ($(OS),Windows_NT)
@@ -17,7 +17,7 @@ help: ## Show this help message
 	@echo ""
 	@echo "Targets:"
 	@echo "  setup         Copy .env.example to .env and install backend dependencies"
-	@echo "  up            Build and start all Docker services in background"
+	@echo "  up            Build and start all Docker services (Nginx, MySQL, Backend) in background"
 	@echo "  down          Stop and remove all Docker containers"
 	@echo "  restart       Restart all Docker services"
 	@echo "  logs          View logs for all services"
@@ -30,6 +30,10 @@ help: ## Show this help message
 	@echo "  clean         Stop containers, remove volumes and node_modules"
 	@echo ""
 
+check-docker:
+	@command -v docker >/dev/null 2>&1 || (echo "[ERROR] Docker is not installed or not in PATH! Download Docker Desktop: https://www.docker.com/products/docker-desktop/" && exit 1)
+	@docker info >/dev/null 2>&1 || (echo "[ERROR] Docker daemon is not running! Please start Docker Desktop/Daemon." && exit 1)
+
 setup: ## Setup environment and install dependencies
 	@if [ ! -f .env ]; then \
 		echo "Creating .env from .env.example..."; \
@@ -41,33 +45,34 @@ setup: ## Setup environment and install dependencies
 	@cd backend && (command -v pnpm >/dev/null 2>&1 && pnpm install || npm install)
 	@echo "Setup complete! Run 'make up' to start the application."
 
-up: ## Start application with Docker Compose
+up: check-docker ## Start application with Docker Compose
 	@if [ ! -f .env ]; then \
 		echo ".env not found! Running setup first..."; \
 		make setup; \
 	fi
+	@echo "Starting services (Docker will automatically download Nginx, MySQL, and Node if missing)..."
 	$(DOCKER_COMPOSE) up -d --build
 
-down: ## Stop application containers
+down: check-docker ## Stop application containers
 	$(DOCKER_COMPOSE) down
 
-restart: ## Restart application containers
+restart: check-docker ## Restart application containers
 	$(DOCKER_COMPOSE) down
 	$(DOCKER_COMPOSE) up -d --build
 
-logs: ## View all service logs
+logs: check-docker ## View all service logs
 	$(DOCKER_COMPOSE) logs -f
 
-logs-backend: ## View backend service logs
+logs-backend: check-docker ## View backend service logs
 	$(DOCKER_COMPOSE) logs -f backend
 
-logs-db: ## View database service logs
+logs-db: check-docker ## View database service logs
 	$(DOCKER_COMPOSE) logs -f mysql
 
-logs-nginx: ## View nginx service logs
+logs-nginx: check-docker ## View nginx service logs
 	$(DOCKER_COMPOSE) logs -f nginx
 
-ps: ## View status of running containers
+ps: check-docker ## View status of running containers
 	$(DOCKER_COMPOSE) ps
 
 status: ps
@@ -82,6 +87,6 @@ dev-backend: ## Run backend locally in dev mode
 	@cd backend && (command -v pnpm >/dev/null 2>&1 && pnpm dev || npm run dev)
 
 clean: ## Remove containers, volumes, and node_modules
-	$(DOCKER_COMPOSE) down -v --remove-orphans
+	-$(DOCKER_COMPOSE) down -v --remove-orphans 2>/dev/null
 	rm -rf backend/node_modules
 	@echo "Clean completed."
