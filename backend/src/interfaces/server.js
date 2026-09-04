@@ -79,22 +79,32 @@ app.use(errorHandler);
 
 // ---- Start server ----
 async function start() {
-  try {
-    // 1. Check and initialize database tables + seed data
-    await initializeDatabase();
+  const maxRetries = 15;
+  const retryIntervalMs = 2000;
 
-    // 2. Start Express app listener
-    app.listen(PORT, () => {
-      console.log(`[Server] Nepali Word Game API running on port ${PORT}`);
-      console.log(`[Server] Environment: ${process.env.NODE_ENV || 'development'}`);
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`[Server] Connecting to database (attempt ${attempt}/${maxRetries})...`);
+      await initializeDatabase();
 
-      // Start the daily word scheduler (FR-3)
-      const scheduler = new DailyWordScheduler(wordRepo, challengeRepo);
-      scheduler.start();
-    });
-  } catch (err) {
-    console.error('[Server] Critical: Failed to initialize database on startup:', err);
-    process.exit(1);
+      app.listen(PORT, () => {
+        console.log(`[Server] Nepali Word Game API running on port ${PORT}`);
+        console.log(`[Server] Environment: ${process.env.NODE_ENV || 'development'}`);
+
+        // Start the daily word scheduler (FR-3)
+        const scheduler = new DailyWordScheduler(wordRepo, challengeRepo);
+        scheduler.start();
+      });
+      return;
+    } catch (err) {
+      console.error(`[Server] Database connection attempt ${attempt}/${maxRetries} failed: ${err.message}`);
+      if (attempt === maxRetries) {
+        console.error('[Server] Critical: Failed to initialize database after maximum retries:', err);
+        process.exit(1);
+      }
+      console.log(`[Server] Retrying in ${retryIntervalMs / 1000}s...`);
+      await new Promise((resolve) => setTimeout(resolve, retryIntervalMs));
+    }
   }
 }
 

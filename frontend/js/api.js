@@ -11,7 +11,7 @@ const Api = (() => {
 
   async function _request(method, path, body = null) {
     const headers = { 'Content-Type': 'application/json' };
-    const token   = _getToken();
+    const token = _getToken();
 
     if (token) headers['Authorization'] = `Bearer ${token}`;
 
@@ -24,7 +24,7 @@ const Api = (() => {
     if (!res.ok) {
       const err = new Error(data.error || 'Request failed');
       err.status = res.status;
-      err.code   = data.code || null;
+      err.code = data.code || null;
       throw err;
     }
 
@@ -34,20 +34,20 @@ const Api = (() => {
   return {
     // Auth
     register: (body) => _request('POST', '/auth/register', body),
-    login:    (body) => _request('POST', '/auth/login', body),
-    getMe:    ()     => _request('GET',  '/auth/me'),
+    login: (body) => _request('POST', '/auth/login', body),
+    getMe: () => _request('GET', '/auth/me'),
 
     // Email verification
-    verifyEmail:        (token) => _request('GET', `/auth/verify?token=${encodeURIComponent(token)}`),
-    resendVerification: ()      => _request('POST', '/auth/resend-verification'),
+    verifyEmail: (token) => _request('GET', `/auth/verify?token=${encodeURIComponent(token)}`),
+    resendVerification: () => _request('POST', '/auth/resend-verification'),
 
     // Game
-    getDaily:    () => _request('GET',  '/game/daily'),
-    getPractice: () => _request('GET',  '/game/practice'),
+    getDaily: () => _request('GET', '/game/daily'),
+    getPractice: () => _request('GET', '/game/practice'),
     submitGuess: (guessText, practiceToken, attemptNumber) => _request('POST', '/game/guess', { guessText, practiceToken, attemptNumber }),
 
     // Stats & Leaderboard
-    getStats:       ()      => _request('GET', '/stats'),
+    getStats: () => _request('GET', '/stats'),
     getLeaderboard: (limit) => _request('GET', `/leaderboard?limit=${limit || 20}`),
   };
 })();

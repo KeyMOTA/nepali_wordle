@@ -48,15 +48,56 @@ backend/src/
 
 ---
 
-## Quick Start (Docker — recommended)
+## Quick Start (Using Makefile / Windows Batch)
 
 ### Prerequisites
-- Docker Engine 24+
-- Docker Compose v2
+- Docker Engine 24+ & Docker Compose v2
+- Node.js 20+ (for local development without Docker)
+
+### 1. Clone & Setup
+```bash
+git clone https://github.com/KeyMOTA/nepali_wordle.git
+cd nepali_wordle
+
+# Linux / macOS / Git Bash / WSL:
+make setup
+
+# Windows Command Prompt / PowerShell:
+make setup     # (or .\make.bat setup if GNU make is not installed)
+```
+
+This will automatically create your `.env` file from `.env.example` and install backend dependencies.
+
+### 2. Start Everything
+```bash
+# Linux / macOS / Git Bash / WSL:
+make up
+
+# Windows CMD / PowerShell:
+make up        # (or .\make.bat up)
+```
+
+This will build containers, start MySQL 8 with auto-applied schema + seed data, launch the Node.js API, and start Nginx on **http://localhost:8888**.
+
+### 3. Makefile Cheat Sheet
+
+| Command | CMD / PowerShell (Windows) | Description |
+|---|---|---|
+| `make setup` | `.\make.bat setup` | Initialize `.env` and install dependencies |
+| `make up` | `.\make.bat up` | Build & launch Docker containers in background |
+| `make down` | `.\make.bat down` | Stop and remove containers |
+| `make restart` | `.\make.bat restart` | Rebuild & restart containers |
+| `make logs` | `.\make.bat logs` | Follow live container logs |
+| `make test` | `.\make.bat test` | Run backend unit test suite |
+| `make clean` | `.\make.bat clean` | Remove containers, volumes, and `node_modules` |
+
+---
+
+## Detailed Docker Setup (Manual)
 
 ### 1. Clone & configure
 ```bash
-git clone <https://github.com/Akash-kafle/nepali_wordle.git>
+git clone https://github.com/KeyMOTA/nepali_wordle.git
 cd nepali_wordle
 cp .env.example .env
 # Edit .env — change passwords, JWT_SECRET, and SMTP credentials!
