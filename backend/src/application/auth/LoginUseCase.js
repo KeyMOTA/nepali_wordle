@@ -1,7 +1,3 @@
-// =============================================================
-// Use Case: LoginUseCase  (FR-2)
-// =============================================================
-
 class LoginUseCase {
   constructor(userRepo, bcryptService, jwtService) {
     this.userRepo      = userRepo;
@@ -9,12 +5,7 @@ class LoginUseCase {
     this.jwtService    = jwtService;
   }
 
-  /**
-   * @param {{ email: string, password: string }} dto
-   * @returns {Promise<{ token: string, user: object }>}
-   */
   async execute({ email, password }) {
-    // Generic error to avoid revealing whether email exists (SRS FR-2 alternate flow)
     const genericError = Object.assign(
       new Error('Invalid email or password'),
       { statusCode: 401 }

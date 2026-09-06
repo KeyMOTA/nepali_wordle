@@ -1,13 +1,3 @@
-// =============================================================
-// Middleware: Input Sanitizer
-// Trims strings and strips HTML from request bodies
-// =============================================================
-
-/**
- * Recursively sanitize an object's string values:
- * - Trim whitespace
- * - Strip HTML tags
- */
 function sanitizeValue(val) {
   if (typeof val === 'string') {
     return val.trim().replace(/<[^>]*>/g, '');

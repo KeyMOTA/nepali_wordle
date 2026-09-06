@@ -1,7 +1,3 @@
-// =============================================================
-// Controller: AuthController
-// =============================================================
-
 class AuthController {
   constructor(registerUseCase, loginUseCase, verifyEmailUseCase, resendVerificationUseCase) {
     this.registerUseCase           = registerUseCase;

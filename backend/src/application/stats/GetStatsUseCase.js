@@ -1,16 +1,8 @@
-// =============================================================
-// Use Case: GetStatsUseCase  (FR-6 — streak display)
-// =============================================================
-
 class GetStatsUseCase {
   constructor(leaderboardRepo) {
     this.leaderboardRepo = leaderboardRepo;
   }
 
-  /**
-   * @param {{ userId: number }} dto
-   * @returns {Promise<object>}
-   */
   async execute({ userId }) {
     const stat = await this.leaderboardRepo.findByUserId(userId);
 

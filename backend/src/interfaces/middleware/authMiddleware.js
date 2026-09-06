@@ -1,17 +1,9 @@
-// =============================================================
-// Middleware: JWT Auth + Verification checks
-// =============================================================
-
 const JwtService = require('../../infrastructure/auth/JwtService');
 const MySQLUserRepository = require('../../infrastructure/database/MySQLUserRepository');
 
 const jwtService = new JwtService();
 const userRepo   = new MySQLUserRepository();
 
-/**
- * Requires a valid Bearer token.
- * Sets req.user = { userId, email, isVerified }
- */
 async function requireAuth(req, res, next) {
   try {
     const header = req.headers.authorization;
@@ -21,7 +13,6 @@ async function requireAuth(req, res, next) {
     const token   = header.slice(7);
     const payload = jwtService.verify(token);
     
-    // Verify user exists in the database
     const user = await userRepo.findById(payload.userId);
     if (!user) {
       return res.status(401).json({ error: 'Authentication failed: User no longer exists' });

@@ -1,7 +1,3 @@
-// =============================================================
-// Domain Entity: User
-// Pure business object — no framework dependencies
-// =============================================================
 
 class User {
   constructor({ userId, email, passwordHash, username, isVerified, verificationToken, verificationExpires, createdAt }) {

@@ -1,8 +1,3 @@
-// =============================================================
-// Infrastructure: NspellSpellingService
-// Wraps dictionary-ne and nspell to validate words (FR-4)
-// =============================================================
-
 const { getPool } = require('../database/pool');
 const dictionaryModule = import('dictionary-ne');
 const nspellModule     = import('nspell');

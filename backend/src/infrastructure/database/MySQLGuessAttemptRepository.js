@@ -1,7 +1,3 @@
-// =============================================================
-// Infrastructure: MySQLGuessAttemptRepository
-// =============================================================
-
 const { getPool }   = require('./pool');
 const GuessAttempt  = require('../../domain/entities/GuessAttempt');
 

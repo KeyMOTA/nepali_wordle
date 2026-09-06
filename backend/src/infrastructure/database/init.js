@@ -1,7 +1,3 @@
-// =============================================================
-// Infrastructure: MySQL2 Database Initializer & Seeder
-// =============================================================
-
 const { getPool } = require('./pool');
 
 const SEED_WORDS = [
@@ -18,7 +14,6 @@ async function initializeDatabase() {
   try {
     console.log('[Database] Checking/initializing tables...');
 
-    // 1. Create tables
     await connection.query(`
       CREATE TABLE IF NOT EXISTS users (
         user_id      INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -89,7 +84,6 @@ async function initializeDatabase() {
 
     console.log('[Database] Tables verified/created successfully.');
 
-    // 2. Check if words are already seeded
     const [rows] = await connection.query('SELECT COUNT(*) as count FROM words');
     if (rows[0].count === 0) {
       console.log('[Database] No words found. Seeding initial vocabulary...');
@@ -98,7 +92,6 @@ async function initializeDatabase() {
       console.log(`[Database] Seeded ${SEED_WORDS.length} words.`);
     }
 
-    // 3. Ensure a challenge exists for today
     const [challengeRows] = await connection.query(
       'SELECT challenge_id FROM daily_challenges WHERE challenge_date = CURDATE()'
     );

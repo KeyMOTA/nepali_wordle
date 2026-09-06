@@ -1,7 +1,3 @@
-// =============================================================
-// config.js — Frontend global runtime configuration
-// =============================================================
-
 window.CONFIG = {
   // For production deployment (e.g. GitHub Pages + Railway):
   // This placeholder will be replaced with your actual Railway backend URL

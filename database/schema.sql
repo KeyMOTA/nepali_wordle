@@ -1,8 +1,3 @@
--- =============================================================
--- Nepali Word Game — Database Schema
--- MySQL 8.0+
--- =============================================================
-
 SET NAMES utf8mb4;
 
 -- CREATE DATABASE IF NOT EXISTS nepali_word_game

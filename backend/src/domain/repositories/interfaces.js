@@ -1,8 +1,3 @@
-// =============================================================
-// Domain Repository Interfaces
-// These define the contracts that infrastructure must implement.
-// No implementation here — just documentation via JS class.
-// =============================================================
 
 class IUserRepository {
   /** @param {string} email @returns {Promise<User|null>} */

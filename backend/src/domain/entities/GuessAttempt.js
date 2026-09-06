@@ -1,6 +1,3 @@
-// =============================================================
-// Domain Entity: GuessAttempt
-// =============================================================
 
 class GuessAttempt {
   constructor({ attemptId, userId, challengeId, guessText, feedback, attemptNumber, isCorrect, submittedAt }) {

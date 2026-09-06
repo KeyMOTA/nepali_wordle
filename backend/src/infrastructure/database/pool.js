@@ -1,7 +1,3 @@
-// =============================================================
-// Infrastructure: MySQL2 Connection Pool
-// =============================================================
-
 const mysql = require('mysql2/promise');
 
 let pool;

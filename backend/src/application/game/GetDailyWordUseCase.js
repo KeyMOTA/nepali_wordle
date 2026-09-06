@@ -1,18 +1,9 @@
-// =============================================================
-// Use Case: GetDailyWordUseCase  (FR-3)
-// Returns today's challenge metadata — word text NOT revealed
-// =============================================================
-
 class GetDailyWordUseCase {
   constructor(dailyChallengeRepo, guessAttemptRepo) {
     this.dailyChallengeRepo = dailyChallengeRepo;
     this.guessAttemptRepo   = guessAttemptRepo;
   }
 
-  /**
-   * @param {{ userId: number|null, date: string }} dto
-   * @returns {Promise<object>}
-   */
   async execute({ userId, date }) {
     const challenge = await this.dailyChallengeRepo.findByDate(date);
 
@@ -39,7 +30,6 @@ class GetDailyWordUseCase {
       attempts,
       gameOver,
       won,
-      // Only reveal word if game is over
       word: gameOver ? challenge.wordText : null,
     };
   }

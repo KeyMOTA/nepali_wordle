@@ -1,8 +1,3 @@
--- =============================================================
--- Nepali Word Game — Seed Data
--- Run AFTER schema.sql
--- =============================================================
-
 SET NAMES utf8mb4;
 
 -- USE nepali_word_game;

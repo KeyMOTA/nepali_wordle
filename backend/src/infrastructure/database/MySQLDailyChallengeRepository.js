@@ -1,7 +1,3 @@
-// =============================================================
-// Infrastructure: MySQLDailyChallengeRepository
-// =============================================================
-
 const { getPool }      = require('./pool');
 const DailyChallenge   = require('../../domain/entities/DailyChallenge');
 

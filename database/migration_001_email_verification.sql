@@ -1,8 +1,3 @@
--- =============================================================
--- Migration 001: Email Verification
--- Run this on existing databases to add email verification columns
--- =============================================================
-
 USE nepali_word_game;
 
 ALTER TABLE users

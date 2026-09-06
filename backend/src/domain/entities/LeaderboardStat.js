@@ -1,6 +1,3 @@
-// =============================================================
-// Domain Entity: LeaderboardStat
-// =============================================================
 
 class LeaderboardStat {
   constructor({ userId, username, currentStreak, maxStreak, totalWins, gamesPlayed, lastPlayedDate, lastWonDate }) {

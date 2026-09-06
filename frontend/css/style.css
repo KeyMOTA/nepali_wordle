@@ -1,8 +1,3 @@
-/* ============================================================
-   Nepali Word Game — Black & White Minimalist
-   Pure monochrome, clean geometry, zero ornamentation
-   ============================================================ */
-
 :root {
   --white:          #faf6ee; /* Warm Cream Paper */
   --off-white:      #f4eedc; /* Soft card/hover cream */
@@ -52,9 +47,6 @@ body {
 
 .hidden { display: none !important; }
 
-/* ============================================================
-   HEADER
-   ============================================================ */
 .header {
   position: sticky;
   top: 0;
@@ -138,9 +130,7 @@ body {
 .nav-btn--logout { color: var(--dark-grey); }
 .nav-btn--logout:hover { background: var(--off-white); border-color: var(--light-grey); color: var(--ink); }
 
-/* ============================================================
-   VIEWS
-   ============================================================ */
+/* VIEWS */
 .main { flex: 1; display: flex; flex-direction: column; }
 
 .view {
@@ -158,9 +148,7 @@ body {
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* ============================================================
-   GAME
-   ============================================================ */
+/* GAME */
 .game-container {
   width: 100%;
   max-width: 380px;
@@ -293,9 +281,7 @@ body {
   text-align: center;
 }
 
-/* ============================================================
-   KEYBOARD
-   ============================================================ */
+/* KEYBOARD */
 .keyboard {
   width: 100%;
   max-width: 380px;
@@ -367,9 +353,7 @@ body {
   font-weight: 600;
 }
 
-/* ============================================================
-   AUTH
-   ============================================================ */
+/* AUTH */
 .view#view-auth { justify-content: center; }
 
 .auth-card, .glass-card {
@@ -471,9 +455,7 @@ body {
 
 .link-btn:hover { color: var(--black); }
 
-/* ============================================================
-   BUTTONS
-   ============================================================ */
+/* BUTTONS */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -523,9 +505,7 @@ body {
 .btn--sm { font-size: 0.7rem; padding: 0.35rem 0.6rem; }
 .btn--full { width: 100%; }
 
-/* ============================================================
-   VERIFY VIEW
-   ============================================================ */
+/* VERIFY VIEW */
 .view#view-verify { justify-content: center; }
 
 .verify-card { width: 100%; max-width: 360px; padding: 1.75rem 1.25rem; text-align: center; }
@@ -534,9 +514,7 @@ body {
 .verify-card-message { color: var(--dark-grey); font-size: 0.85rem; margin-bottom: 1rem; line-height: 1.5; }
 .verify-card .btn { margin-bottom: 0.5rem; }
 
-/* ============================================================
-   LEADERBOARD
-   ============================================================ */
+/* LEADERBOARD */
 .leaderboard-container { width: 100%; max-width: 460px; }
 
 .section-title { font-size: 1.45rem; font-weight: 700; text-align: center; margin-bottom: 0.3rem; text-shadow: 0.5px 0.5px 0 rgba(46, 41, 29, 0.1); }
@@ -584,9 +562,6 @@ body {
 
 .user-rank-banner strong { color: var(--ink); }
 
-/* ============================================================
-   MODALS
-   ============================================================ */
 .modal-overlay {
   position: fixed; inset: 0; z-index: 200;
   background: rgba(46, 41, 29, 0.4);
@@ -648,9 +623,7 @@ body {
 .stat-card-value { font-size: 1.6rem; font-weight: 700; line-height: 1; }
 .stat-card-label { font-size: 0.6rem; color: var(--dark-grey); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.2rem; font-weight: 600; }
 
-/* ============================================================
-   TOAST
-   ============================================================ */
+/* TOAST */
 .toast {
   position: fixed; top: 62px; left: 50%; transform: translateX(-50%);
   z-index: 300;
@@ -672,9 +645,7 @@ body {
   to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* ============================================================
-   MISC
-   ============================================================ */
+/* MISC */
 .guest-banner {
   width: 100%; max-width: 380px;
   border: 1px solid var(--mid-grey);
@@ -700,9 +671,7 @@ body {
 ::-webkit-scrollbar-track { background: var(--white); }
 ::-webkit-scrollbar-thumb { background: var(--mid-grey); }
 
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
+/* RESPONSIVE */
 @media (max-width: 460px) {
   :root { --tile-size: 64px; --tile-gap: 4px; }
   .header-inner { padding: 0 0.75rem; }

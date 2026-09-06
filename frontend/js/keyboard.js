@@ -1,7 +1,3 @@
-// =============================================================
-// keyboard.js — On-screen Devanagari keyboard (NFR-6)
-// =============================================================
-
 const Keyboard = (() => {
   // Key definitions — consonants, vowels, matras, specials
   const ROWS = [

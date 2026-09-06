@@ -1,20 +1,16 @@
-// =============================================================
-// stats.js — Result modal, stats modal, leaderboard view
-// =============================================================
-
 const Stats = (() => {
 
   // ---- Result / Win-Loss Modal ----
   function showResultModal(won, word, data) {
-    const modal      = document.getElementById('modal-result');
-    const emojiEl    = document.getElementById('modal-emoji');
-    const titleEl    = document.getElementById('modal-result-title');
+    const modal = document.getElementById('modal-result');
+    const emojiEl = document.getElementById('modal-emoji');
+    const titleEl = document.getElementById('modal-result-title');
     const subtitleEl = document.getElementById('modal-subtitle');
-    const statsEl    = document.getElementById('modal-result-stats');
-    const wordEl     = document.getElementById('modal-word-reveal');
+    const statsEl = document.getElementById('modal-result-stats');
+    const wordEl = document.getElementById('modal-word-reveal');
 
-    emojiEl.textContent  = won ? '🎉' : '😔';
-    titleEl.textContent  = won ? 'शाबाश! You Won!' : 'Better Luck Tomorrow';
+    emojiEl.textContent = won ? '🎉' : '😔';
+    titleEl.textContent = won ? 'शाबाश! You Won!' : 'Better Luck Tomorrow';
     subtitleEl.textContent = won
       ? `Solved in ${data.attemptNumber} attempt${data.attemptNumber > 1 ? 's' : ''}!`
       : 'The word was:';
@@ -27,7 +23,7 @@ const Stats = (() => {
       wordEl.style.display = 'none';
     }
 
-    const isPractice  = Game.isPracticeMode();
+    const isPractice = Game.isPracticeMode();
     const countdownEl = document.querySelector('.modal-countdown');
     const practiceBtn = document.getElementById('modal-practice-btn');
 
@@ -80,7 +76,7 @@ const Stats = (() => {
 
     // Close button
     document.getElementById('modal-close-btn').onclick = () => modal.classList.add('hidden');
-    document.getElementById('modal-share-btn').onclick  = () => _shareResult(won, word, data);
+    document.getElementById('modal-share-btn').onclick = () => _shareResult(won, word, data);
     modal.addEventListener('click', (e) => {
       if (e.target === modal) modal.classList.add('hidden');
     });
@@ -91,17 +87,17 @@ const Stats = (() => {
     if (!timerEl) return;
 
     function update() {
-      const now     = new Date();
+      const now = new Date();
       // Next midnight NPT = next UTC 18:15
-      const utcNow  = now.getTime() + now.getTimezoneOffset() * 60000;
-      const nptNow  = new Date(utcNow + (5 * 60 + 45) * 60000);
+      const utcNow = now.getTime() + now.getTimezoneOffset() * 60000;
+      const nptNow = new Date(utcNow + (5 * 60 + 45) * 60000);
       const midnight = new Date(nptNow);
       midnight.setHours(24, 0, 0, 0);
       const diffMs = midnight - nptNow;
       const h = Math.floor(diffMs / 3600000);
       const m = Math.floor((diffMs % 3600000) / 60000);
       const s = Math.floor((diffMs % 60000) / 1000);
-      timerEl.textContent = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      timerEl.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     }
 
     update();
@@ -113,14 +109,14 @@ const Stats = (() => {
   function _shareResult(won, word, data) {
     const emojiMap = { green: '🟢', blue: '🔵', yellow: '🟡', grey: '⬛' };
     const attempts = data.attempts || [];
-    const grid     = attempts.map(a =>
+    const grid = attempts.map(a =>
       a.feedback.map(f => emojiMap[f.status] || '⬛').join('')
     ).join('\n');
 
     const text = `नेपाली शब्द खेल ${won ? '✅' : '❌'} ${data.attemptNumber ?? '?'}/6\n\n${grid}\n\nPlay: ${window.location.href}`;
 
     if (navigator.share) {
-      navigator.share({ text }).catch(() => {});
+      navigator.share({ text }).catch(() => { });
     } else {
       navigator.clipboard.writeText(text).then(() => {
         App.showToast('Result copied! 📋');
@@ -133,7 +129,7 @@ const Stats = (() => {
   // ---- Stats Modal ----
   async function showStatsModal() {
     const modal = document.getElementById('modal-stats');
-    const grid  = document.getElementById('stats-grid');
+    const grid = document.getElementById('stats-grid');
 
     grid.innerHTML = '<div class="spinner"></div>';
     modal.classList.remove('hidden');
@@ -177,12 +173,12 @@ const Stats = (() => {
   // ---- Leaderboard View ----
   async function loadLeaderboard() {
     const container = document.getElementById('leaderboard-list');
-    const banner    = document.getElementById('user-rank-banner');
+    const banner = document.getElementById('user-rank-banner');
     container.innerHTML = '<div class="lb-empty"><div class="spinner"></div></div>';
 
     try {
       const userId = _getLocalUserId();
-      const data   = await Api.getLeaderboard(20);
+      const data = await Api.getLeaderboard(20);
       const { leaderboard, userRank } = data;
 
       if (!leaderboard || leaderboard.length === 0) {
@@ -193,11 +189,11 @@ const Stats = (() => {
       const medals = ['🥇', '🥈', '🥉'];
 
       container.innerHTML = leaderboard.map((player, idx) => {
-        const rank     = idx + 1;
+        const rank = idx + 1;
         const rankHtml = rank <= 3
-          ? `<span class="lb-rank lb-rank--medal">${medals[rank-1]}</span>`
+          ? `<span class="lb-rank lb-rank--medal">${medals[rank - 1]}</span>`
           : `<span class="lb-rank">${rank}</span>`;
-        const isMe     = player.userId === userId;
+        const isMe = player.userId === userId;
         const rowClass = rank <= 3 ? `lb-row--top${rank}` : isMe ? 'lb-row--me' : '';
 
         return `

@@ -1,22 +1,17 @@
-// =============================================================
-// game.js — Tile grid, input handling, guess submission
-// =============================================================
-
 const Game = (() => {
   const MAX_ROWS    = 6;
   const WORD_LENGTH = 3;
 
   let _state = {
     currentRow:    0,
-    currentInput:  [],   // array of akshara strings, max 3
-    tiles:         [],   // 2D array [row][col] of DOM elements
+    currentInput:  [],
+    tiles:         [],
     isGameOver:    false,
     challengeId:   null,
     isPracticeMode: false,
     practiceToken:  null,
   };
 
-  // ---- Public: Initialize ----
   async function init() {
     _buildGrid();
     Keyboard.init(_onKey);

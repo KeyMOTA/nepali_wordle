@@ -1,7 +1,3 @@
-// =============================================================
-// Infrastructure: MySQLLeaderboardRepository
-// =============================================================
-
 const { getPool }    = require('./pool');
 const LeaderboardStat = require('../../domain/entities/LeaderboardStat');
 

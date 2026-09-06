@@ -1,7 +1,3 @@
-// =============================================================
-// Infrastructure: MySQLUserRepository
-// =============================================================
-
 const { getPool } = require('./pool');
 const User        = require('../../domain/entities/User');
 

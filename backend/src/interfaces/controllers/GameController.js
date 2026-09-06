@@ -1,7 +1,3 @@
-// =============================================================
-// Controller: GameController
-// =============================================================
-
 class GameController {
   constructor(getDailyWordUseCase, submitGuessUseCase, wordRepo, jwtSvc, feedbackEngine, spellingService) {
     this.getDailyWordUseCase = getDailyWordUseCase;
@@ -12,7 +8,6 @@ class GameController {
     this.spellingService     = spellingService;
   }
 
-  /** GET /api/game/daily */
   getDaily = async (req, res, next) => {
     try {
       const todayNPT = this._getTodayNPT();
@@ -24,7 +19,6 @@ class GameController {
     }
   };
 
-  /** GET /api/game/practice */
   getPractice = async (req, res, next) => {
     try {
       const word = await this.wordRepo.findRandom();
@@ -32,7 +26,6 @@ class GameController {
         return res.status(404).json({ error: 'No words available in database' });
       }
 
-      // Generate a temporary 1-hour signed JWT containing the target word
       const practiceToken = this.jwtSvc.sign(
         { wordText: word.wordText, wordId: word.wordId },
         '1h'
@@ -44,7 +37,6 @@ class GameController {
     }
   };
 
-  /** POST /api/game/guess */
   submitGuess = async (req, res, next) => {
     try {
       const { guessText, practiceToken, attemptNumber } = req.body;
@@ -54,7 +46,6 @@ class GameController {
 
       const guessTrimmed = guessText.trim();
 
-      // Handle practice mode guess (stateless)
       if (practiceToken) {
         try {
           const payload = this.jwtSvc.verify(practiceToken);
@@ -65,7 +56,6 @@ class GameController {
             return res.status(400).json({ error: 'Guess must have exactly 3 units' });
           }
 
-          // Validate that the word exists in the dictionary
           const isValid = await this.spellingService.isValidWord(guessTrimmed);
           if (!isValid) {
             return res.status(400).json({ error: `"${guessTrimmed}" is not a valid Nepali word` });
@@ -89,7 +79,6 @@ class GameController {
         }
       }
 
-      // Daily challenge guess
       if (!req.user) {
         return res.status(401).json({ error: 'Sign in to play! Your streak awaits 🔥' });
       }

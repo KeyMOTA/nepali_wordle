@@ -1,6 +1,3 @@
-// =============================================================
-// Domain Entity: DailyChallenge
-// =============================================================
 
 class DailyChallenge {
   constructor({ challengeId, wordId, wordText, challengeDate, createdAt }) {

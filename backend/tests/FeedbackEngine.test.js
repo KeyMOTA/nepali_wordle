@@ -1,7 +1,3 @@
-// =============================================================
-// Tests: FeedbackEngine  (FR-5)
-// =============================================================
-
 const FeedbackEngine = require('../src/infrastructure/feedback/FeedbackEngine');
 
 describe('FeedbackEngine', () => {

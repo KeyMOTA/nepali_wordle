@@ -1,26 +1,18 @@
-// =============================================================
-// app.js — Application controller: auth state, routing, views
-// =============================================================
-
 const App = (() => {
-  // ---- State ----
   let _isLoggedIn  = false;
   let _isVerified  = false;
   let _toastTimer  = null;
 
-  // ---- Init ----
   async function init() {
     _bindNavButtons();
     _bindAuthForms();
     _bindTabSwitchers();
     _bindVerificationButtons();
 
-    // Check for verification token in URL (?verify=TOKEN)
     const urlParams   = new URLSearchParams(window.location.search);
     const verifyToken = urlParams.get('verify');
 
     if (verifyToken) {
-      // Clean the URL
       window.history.replaceState({}, '', window.location.pathname);
       await _handleEmailVerification(verifyToken);
       return;

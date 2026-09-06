@@ -1,8 +1,3 @@
-// =============================================================
-// Middleware: Global Error Handler
-// Structured error responses with codes
-// =============================================================
-
 function errorHandler(err, req, res, _next) {
   const statusCode = err.statusCode || 500;
   const message    = statusCode < 500 ? err.message : 'Internal server error';

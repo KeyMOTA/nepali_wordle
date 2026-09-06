@@ -1,22 +1,3 @@
-// =============================================================
-// FeedbackEngine  (FR-5)
-// Two-pass Wordle-style algorithm for Devanagari aksharas
-//
-// An "akshara" (syllable cluster) is defined as:
-//   base consonant/vowel + zero or more combining marks
-//   We use Unicode Segmentation rules for Devanagari grapheme clusters.
-//
-// Unicode Devanagari ranges used:
-//   Consonants:  U+0915–U+0939, U+0958–U+095F
-//   Vowels:      U+0905–U+0914
-//   Matras:      U+093E–U+094F, U+0955–U+0957
-//   Nukta:       U+093C
-//   Anusvara:    U+0902
-//   Visarga:     U+0903
-//   Chandrabindu:U+0901
-//   Halant:      U+094D  (virama — joins consonants)
-// =============================================================
-
 class FeedbackEngine {
   /**
    * Tokenize a Devanagari string into akshara (grapheme cluster) units.

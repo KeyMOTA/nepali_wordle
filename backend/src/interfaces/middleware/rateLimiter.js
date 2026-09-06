@@ -1,7 +1,3 @@
-// =============================================================
-// Middleware: Rate Limiter (express-rate-limit)
-// =============================================================
-
 const rateLimit = require('express-rate-limit');
 
 /**
