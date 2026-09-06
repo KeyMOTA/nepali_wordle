@@ -69,6 +69,8 @@ make setup     # (or .\make.bat setup if GNU make is not installed)
 This will automatically create your `.env` file from `.env.example` and install backend dependencies.
 
 ### 2. Start Everything
+
+**Standard Mode (Without Nginx):**
 ```bash
 # Linux / macOS / Git Bash / WSL:
 make up
@@ -76,17 +78,28 @@ make up
 # Windows CMD / PowerShell:
 make up        # (or .\make.bat up)
 ```
+Starts MySQL 8, Backend API on **http://localhost:3000**, and Frontend UI on **http://localhost:8888** without Nginx.
 
-This will build containers, start MySQL 8 with auto-applied schema + seed data, launch the Node.js API, and start Nginx on **http://localhost:8888**.
+**With Nginx Reverse Proxy:**
+```bash
+# Linux / macOS / Git Bash / WSL:
+make nginx
+
+# Windows CMD / PowerShell:
+make nginx     # (or .\make.bat nginx)
+```
+Launches all services with Nginx reverse proxy routing traffic on **http://localhost:8888**.
 
 ### 3. Makefile Cheat Sheet
 
 | Command | CMD / PowerShell (Windows) | Description |
 |---|---|---|
 | `make setup` | `.\make.bat setup` | Initialize `.env` and install dependencies |
-| `make up` | `.\make.bat up` | Build & launch Docker containers in background |
+| `make up` | `.\make.bat up` | Build & launch standard containers (MySQL, Backend, Frontend) WITHOUT Nginx |
+| `make nginx` | `.\make.bat nginx` | Build & launch Docker containers WITH Nginx reverse proxy |
 | `make down` | `.\make.bat down` | Stop and remove containers |
-| `make restart` | `.\make.bat restart` | Rebuild & restart containers |
+| `make restart` | `.\make.bat restart` | Rebuild & restart standard containers |
+| `make restart-nginx` | `.\make.bat restart-nginx` | Rebuild & restart containers WITH Nginx |
 | `make logs` | `.\make.bat logs` | Follow live container logs |
 | `make test` | `.\make.bat test` | Run backend unit test suite |
 | `make clean` | `.\make.bat clean` | Remove containers, volumes, and `node_modules` |

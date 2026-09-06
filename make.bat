@@ -14,13 +14,16 @@ if %errorlevel% equ 0 (
 
 :: Fallback implementation for Windows native CMD/PowerShell if GNU make is not installed
 set TARGET=%1
+if "%TARGET%"==" " set TARGET=help
 if "%TARGET%"=="" set TARGET=help
 
 if /i "%TARGET%"=="help" goto help
 if /i "%TARGET%"=="setup" goto setup
 if /i "%TARGET%"=="up" goto up
+if /i "%TARGET%"=="nginx" goto nginx
 if /i "%TARGET%"=="down" goto down
 if /i "%TARGET%"=="restart" goto restart
+if /i "%TARGET%"=="restart-nginx" goto restart-nginx
 if /i "%TARGET%"=="logs" goto logs
 if /i "%TARGET%"=="logs-backend" goto logs-backend
 if /i "%TARGET%"=="logs-db" goto logs-db
@@ -36,16 +39,18 @@ echo Run 'make' or 'make help' to see available targets.
 exit /b 1
 
 :help
-echo Nepali Word Game - Available Commands:
+echo Akshara - Available Commands:
 echo.
 echo Usage: make [target]  or  .\make.bat [target]
 echo.
 echo Targets:
 echo   setup         Copy .env.example to .env and install backend dependencies
-echo   up            Build and start all Docker services (Nginx, MySQL, Backend) in background
+echo   up            Build and start standard Docker services (MySQL, Backend, Frontend) WITHOUT Nginx
+echo   nginx         Build and start Docker services WITH Nginx reverse proxy
 echo   down          Stop and remove all Docker containers
-echo   restart       Restart all Docker services
-echo   logs          View logs for all services
+echo   restart       Restart standard Docker services (without Nginx)
+echo   restart-nginx Restart Docker services WITH Nginx reverse proxy
+echo   logs          View logs for running services
 echo   logs-backend  View backend logs
 echo   logs-db       View database logs
 echo   logs-nginx    View nginx logs
@@ -86,7 +91,7 @@ if %errorlevel% equ 0 (
     call npm install
 )
 cd ..
-echo Setup complete! Run 'make up' or '.\make.bat up' to start the application.
+echo Setup complete! Run 'make up' (without Nginx) or 'make nginx' (with Nginx) to start the application.
 goto :eof
 
 :up
@@ -97,27 +102,46 @@ if not exist .env (
     echo .env not found! Running setup first...
     call :setup
 )
-echo Starting services (Docker will automatically download Nginx, MySQL, and Node if missing)...
+echo Starting standard services (MySQL, Backend, Frontend) WITHOUT Nginx...
 docker compose up -d --build
+goto :eof
+
+:nginx
+call :check_docker
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+if not exist .env (
+    echo .env not found! Running setup first...
+    call :setup
+)
+echo Starting services WITH Nginx reverse proxy...
+docker compose -f docker-compose.yml -f docker-compose.nginx.yml up -d --build
 goto :eof
 
 :down
 call :check_docker
 if %errorlevel% neq 0 exit /b %errorlevel%
-docker compose down
+docker compose -f docker-compose.yml -f docker-compose.nginx.yml down --remove-orphans
 goto :eof
 
 :restart
 call :check_docker
 if %errorlevel% neq 0 exit /b %errorlevel%
-docker compose down
+docker compose down --remove-orphans
 docker compose up -d --build
+goto :eof
+
+:restart-nginx
+call :check_docker
+if %errorlevel% neq 0 exit /b %errorlevel%
+docker compose -f docker-compose.yml -f docker-compose.nginx.yml down --remove-orphans
+docker compose -f docker-compose.yml -f docker-compose.nginx.yml up -d --build
 goto :eof
 
 :logs
 call :check_docker
 if %errorlevel% neq 0 exit /b %errorlevel%
-docker compose logs -f
+docker compose -f docker-compose.yml -f docker-compose.nginx.yml logs -f
 goto :eof
 
 :logs-backend
@@ -135,13 +159,13 @@ goto :eof
 :logs-nginx
 call :check_docker
 if %errorlevel% neq 0 exit /b %errorlevel%
-docker compose logs -f nginx
+docker compose -f docker-compose.yml -f docker-compose.nginx.yml logs -f nginx
 goto :eof
 
 :ps
 call :check_docker
 if %errorlevel% neq 0 exit /b %errorlevel%
-docker compose ps
+docker compose -f docker-compose.yml -f docker-compose.nginx.yml ps
 goto :eof
 
 :test
@@ -168,7 +192,7 @@ goto :eof
 
 :clean
 call :check_docker
-docker compose down -v --remove-orphans 2>nul
+docker compose -f docker-compose.yml -f docker-compose.nginx.yml down -v --remove-orphans 2>nul
 if exist backend\node_modules rmdir /s /q backend\node_modules
 echo Clean completed.
 goto :eof

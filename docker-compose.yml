@@ -15,7 +15,7 @@ services:
       - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
     ports:
-      - "3306:3306"  # expose for local DB tools (remove in production)
+      - "3306:3306"
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-rootsecret}"]
       interval: 10s
@@ -23,7 +23,7 @@ services:
       retries: 10
       start_period: 30s
     networks:
-      - nwg-internal
+      - nwg-network
 
   # ---- Node.js Backend ----
   backend:
@@ -32,6 +32,8 @@ services:
       dockerfile: Dockerfile
     container_name: nwg-backend
     restart: unless-stopped
+    ports:
+      - "3000:3000"
     environment:
       NODE_ENV:       ${NODE_ENV:-development}
       PORT:           3000
@@ -47,13 +49,17 @@ services:
       SMTP_PORT:      ${SMTP_PORT:-587}
       SMTP_USER:      ${SMTP_USER:-}
       SMTP_PASS:      ${SMTP_PASS:-}
+      GMAIL_CLIENT_ID:     ${GMAIL_CLIENT_ID:-}
+      GMAIL_CLIENT_SECRET: ${GMAIL_CLIENT_SECRET:-}
+      GMAIL_REFRESH_TOKEN: ${GMAIL_REFRESH_TOKEN:-}
+      GMAIL_USER:          ${GMAIL_USER:-}
+      RESEND_API_KEY:      ${RESEND_API_KEY:-}
       FRONTEND_URL:   ${FRONTEND_URL:-http://localhost:8888}
     depends_on:
       mysql:
         condition: service_healthy
     networks:
-      - nwg-internal
-      - nwg-external
+      - nwg-network
     healthcheck:
       test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3000/api/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))\""]
       interval: 15s
@@ -61,42 +67,24 @@ services:
       retries: 5
       start_period: 20s
 
-  # ---- Frontend (Nginx static) ----
+  # ---- Frontend UI ----
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: nwg-frontend
     restart: unless-stopped
-    networks:
-      - nwg-internal
-
-  # ---- Nginx Reverse Proxy ----
-  nginx:
-    image: nginx:1.27-alpine
-    container_name: nwg-nginx
-    restart: unless-stopped
     ports:
       - "8888:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    depends_on:
-      backend:
-        condition: service_healthy
-      frontend:
-        condition: service_started
+    environment:
+      API_BASE: ${API_BASE:-http://localhost:3000/api}
     networks:
-      - nwg-internal
-      - nwg-external
+      - nwg-network
 
 volumes:
   mysql_data:
     driver: local
 
 networks:
-  nwg-internal:
-    driver: bridge
-    internal: true   # backend/mysql not reachable from outside, only through nginx
-  nwg-external:
+  nwg-network:
     driver: bridge

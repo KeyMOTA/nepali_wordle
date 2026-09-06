@@ -37,7 +37,7 @@ app.use(helmet({
 const getAllowedOrigin = () => {
   const origin = process.env.CORS_ORIGIN;
   if (!origin || origin === '*') {
-    return 'http://localhost:8888';
+    return true;
   }
   try {
     // Extract protocol + host to handle cases where a path or trailing slash is included
@@ -88,7 +88,7 @@ async function start() {
       await initializeDatabase();
 
       app.listen(PORT, () => {
-        console.log(`[Server] Nepali Word Game API running on port ${PORT}`);
+        console.log(`[Server] Akshara API running on port ${PORT}`);
         console.log(`[Server] Environment: ${process.env.NODE_ENV || 'development'}`);
 
         // Start the daily word scheduler (FR-3)

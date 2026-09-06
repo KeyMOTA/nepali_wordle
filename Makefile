@@ -1,26 +1,23 @@
-.PHONY: help setup up down restart logs logs-backend logs-db logs-nginx ps status test dev-backend clean check-docker
+.PHONY: help setup up nginx down restart restart-nginx logs logs-backend logs-db logs-nginx ps status test dev-backend clean check-docker
 
-# Detect OS
-ifeq ($(OS),Windows_NT)
-	DOCKER_COMPOSE ?= docker compose
-else
-	DOCKER_COMPOSE ?= docker compose
-endif
+DOCKER_COMPOSE := docker compose
 
 # Default target
 .DEFAULT_GOAL := help
 
 help: ## Show this help message
-	@echo "Nepali Word Game - Available Commands:"
+	@echo "Akshara - Available Commands:"
 	@echo ""
 	@echo "Usage: make [target]"
 	@echo ""
 	@echo "Targets:"
 	@echo "  setup         Copy .env.example to .env and install backend dependencies"
-	@echo "  up            Build and start all Docker services (Nginx, MySQL, Backend) in background"
+	@echo "  up            Build and start standard Docker services (MySQL, Backend, Frontend) WITHOUT Nginx"
+	@echo "  nginx         Build and start Docker services WITH Nginx reverse proxy"
 	@echo "  down          Stop and remove all Docker containers"
-	@echo "  restart       Restart all Docker services"
-	@echo "  logs          View logs for all services"
+	@echo "  restart       Restart standard Docker services (without Nginx)"
+	@echo "  restart-nginx Restart Docker services WITH Nginx reverse proxy"
+	@echo "  logs          View logs for all running services"
 	@echo "  logs-backend  View backend logs"
 	@echo "  logs-db       View database logs"
 	@echo "  logs-nginx    View nginx logs"
@@ -43,25 +40,37 @@ setup: ## Setup environment and install dependencies
 	fi
 	@echo "Installing backend dependencies..."
 	@cd backend && (command -v pnpm >/dev/null 2>&1 && pnpm install || npm install)
-	@echo "Setup complete! Run 'make up' to start the application."
+	@echo "Setup complete! Run 'make up' (without Nginx) or 'make nginx' (with Nginx) to start the application."
 
-up: check-docker ## Start application with Docker Compose
+up: check-docker ## Start standard application WITHOUT Nginx
 	@if [ ! -f .env ]; then \
 		echo ".env not found! Running setup first..."; \
 		make setup; \
 	fi
-	@echo "Starting services (Docker will automatically download Nginx, MySQL, and Node if missing)..."
+	@echo "Starting standard services (MySQL, Backend, Frontend) WITHOUT Nginx..."
 	$(DOCKER_COMPOSE) up -d --build
+
+nginx: check-docker ## Start application WITH Nginx reverse proxy
+	@if [ ! -f .env ]; then \
+		echo ".env not found! Running setup first..."; \
+		make setup; \
+	fi
+	@echo "Starting services WITH Nginx reverse proxy..."
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.nginx.yml up -d --build
 
 down: check-docker ## Stop application containers
-	$(DOCKER_COMPOSE) down
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.nginx.yml down --remove-orphans
 
-restart: check-docker ## Restart application containers
-	$(DOCKER_COMPOSE) down
+restart: check-docker ## Restart standard application (without Nginx)
+	$(DOCKER_COMPOSE) down --remove-orphans
 	$(DOCKER_COMPOSE) up -d --build
 
-logs: check-docker ## View all service logs
-	$(DOCKER_COMPOSE) logs -f
+restart-nginx: check-docker ## Restart application WITH Nginx reverse proxy
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.nginx.yml down --remove-orphans
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.nginx.yml up -d --build
+
+logs: check-docker ## View service logs
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.nginx.yml logs -f
 
 logs-backend: check-docker ## View backend service logs
 	$(DOCKER_COMPOSE) logs -f backend
@@ -70,10 +79,10 @@ logs-db: check-docker ## View database service logs
 	$(DOCKER_COMPOSE) logs -f mysql
 
 logs-nginx: check-docker ## View nginx service logs
-	$(DOCKER_COMPOSE) logs -f nginx
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.nginx.yml logs -f nginx
 
 ps: check-docker ## View status of running containers
-	$(DOCKER_COMPOSE) ps
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.nginx.yml ps
 
 status: ps
 
@@ -87,6 +96,6 @@ dev-backend: ## Run backend locally in dev mode
 	@cd backend && (command -v pnpm >/dev/null 2>&1 && pnpm dev || npm run dev)
 
 clean: ## Remove containers, volumes, and node_modules
-	-$(DOCKER_COMPOSE) down -v --remove-orphans 2>/dev/null
+	-$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.nginx.yml down -v --remove-orphans 2>/dev/null
 	rm -rf backend/node_modules
 	@echo "Clean completed."

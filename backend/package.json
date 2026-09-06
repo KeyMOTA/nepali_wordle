@@ -1,7 +1,7 @@
 {
-  "name": "nepali-word-game-backend",
+  "name": "akshara-backend",
   "version": "1.0.0",
-  "description": "Backend API for the Nepali Word Game",
+  "description": "Backend API for Akshara (Nepali Word Game)",
   "main": "src/interfaces/server.js",
   "scripts": {
     "start": "node src/interfaces/server.js",

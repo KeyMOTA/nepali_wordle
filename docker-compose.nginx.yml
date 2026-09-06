@@ -1,0 +1,30 @@
+# =============================================================
+# docker-compose.nginx.yml — Nginx Reverse Proxy Override
+# Use with: docker compose -f docker-compose.yml -f docker-compose.nginx.yml up -d
+# Or run: make nginx (or .\make.bat nginx)
+# =============================================================
+
+services:
+  # In Nginx mode, frontend does not bind host port 8888 directly (Nginx handles host port 8888)
+  frontend:
+    ports: []
+    environment:
+      API_BASE: /api
+
+  # ---- Nginx Reverse Proxy ----
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: nwg-nginx
+    restart: unless-stopped
+    ports:
+      - "8888:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+    networks:
+      - nwg-network
